@@ -1,0 +1,11 @@
+[Unit]
+Description=Run Raspberry Farm Installer on First Boot
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/firstboot-wrapper.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target
