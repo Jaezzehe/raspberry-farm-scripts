@@ -12,6 +12,7 @@ This project automates the installation of all required components for an OLED-b
 - Sets up systemd services for:
   - First-time setup (`firstboot-display-installer.service`)
   - OLED stats script (`mystats.service`)
+- Installs microk8s Service for Kubernetes Cluster integrations
 - Automates all steps with a single install + reboot.
 
 ---
