@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # === CONFIGURATION ===
-TARGET_SCRIPT="/home/ylabs/raspberry-farm-scripts/display_dependency_installer.sh"
-LOG_FILE="/var/log/display_dependency_installer.log"
-SERVICE_NAME="firstboot-display-installer.service"
+TARGET_SCRIPT="/home/ylabs/raspberry-farm-scripts/raspfarm_installer.sh"
+LOG_FILE="/var/log/raspfarm_installer.log"
+SERVICE_NAME="firstboot-raspfarm-installer.service"
 
 # === LOGGING SETUP ===
 exec > >(tee -a "$LOG_FILE") 2>&1

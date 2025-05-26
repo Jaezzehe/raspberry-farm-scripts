@@ -10,10 +10,12 @@ This project automates the installation of all required components for an OLED-b
 - Installs Miniconda to `/opt/miniconda`.
 - Creates and populates a `statsenv` Python environment.
 - Sets up systemd services for:
-  - First-time setup (`firstboot-display-installer.service`)
+  - First-time setup (`firstboot-raspfarm-installer.service`)
   - OLED stats script (`mystats.service`)
 - Installs microk8s Service for Kubernetes Cluster integrations
 - Automates all steps with a single install + reboot.
+
+- Used User is named ylabs
 
 ---
 
@@ -45,9 +47,9 @@ The `install.sh` script performs:
   - File copy and permissioning:
     - `stats.py` (OLED script)
     - `run_stats.sh` (conda wrapper)
-    - `display_dependency_installer.sh` (main setup script)
+    - `raspfarm_installer.sh` (main setup script)
     - `firstboot-wrapper.sh` (runs setup once at boot)
-- Sets up `firstboot-display-installer.service` to trigger the setup on next reboot
+- Sets up `firstboot-raspfarm-installer.service` to trigger the setup on next reboot
 
 ---
 
@@ -57,17 +59,17 @@ The `install.sh` script performs:
 |--------------------------------------------|-----------------------------------------------------|-------------|--------|
 | `scripts/stats.py`                        | `/opt/raspberry-farm-scripts/stats.py`              | `+x`        | root   |
 | `scripts/run_stats.sh`                    | `/opt/raspberry-farm-scripts/run_stats.sh`          | `+x`        | root   |
-| `scripts/display_dependency_installer.sh`  | `/home/ylabs/raspberry-farm-scripts/...`            | `+x`        | ylabs  |
+| `scripts/raspfarm_installer.sh`  | `/home/ylabs/raspberry-farm-scripts/...`            | `+x`        | ylabs  |
 | `bin/firstboot-wrapper.sh`                 | `/usr/local/bin/firstboot-wrapper.sh`               | `+x`        | root   |
-| `systemd/firstboot-display-installer.service` | `/etc/systemd/system/...`                        | —           | root   |
+| `systemd/firstboot-raspfarm-installer.service` | `/etc/systemd/system/...`                        | —           | root   |
 
 ---
 
 ## 🔄 What Happens on Reboot?
 
-- `firstboot-display-installer.service` launches on first boot
+- `firstboot-raspfarm-installer.service` launches on first boot
 - It runs `firstboot-wrapper.sh`, which:
-  - Executes `display_dependency_installer.sh`
+  - Executes `raspfarm_installer.sh`
   - Installs Miniconda + `statsenv` environment
   - Installs Python packages
   - Installs and enables `mystats.service`
@@ -89,7 +91,7 @@ To simulate first boot again:
 
 ```bash
 sudo rm /var/lib/raspberry-firstboot-success
-sudo systemctl enable firstboot-display-installer.service
+sudo systemctl enable firstboot-raspfarm-installer.service
 sudo reboot
 ```
 
@@ -99,8 +101,8 @@ sudo reboot
 
 ```bash
 systemctl status mystats.service
-systemctl status firstboot-display-installer.service
-cat /var/log/display_dependency_installer.log
+systemctl status firstboot-raspfarm-installer.service
+cat /var/log/raspfarm_installer.log
 ```
 
 ---

@@ -9,7 +9,7 @@ ENV_NAME="statsenv"
 TARGET_SCRIPT_DIR="/opt/raspberry-farm-scripts"
 YLABS_HOME="/home/ylabs"
 SRC_DIR="$(pwd)"
-LOG_FILE="/var/log/display_dependency_installer.log"
+LOG_FILE="/var/log/raspfarm_installer.log"
 
 # === 1. Basic system packages ===
 echo "📦 Installing system dependencies..."
@@ -30,10 +30,10 @@ sudo chmod +x "$TARGET_SCRIPT_DIR/"*.sh "$TARGET_SCRIPT_DIR/stats.py"
 sudo chown root:root "$TARGET_SCRIPT_DIR/"*
 
 # === 4. Display Dependency Script ===
-echo "🔧 Copying display_dependency_installer.sh to $YLABS_HOME..."
+echo "🔧 Copying raspfarm_installer.sh to $YLABS_HOME..."
 sudo mkdir -p "$YLABS_HOME/raspberry-farm-scripts"
-sudo cp "$SRC_DIR/scripts/display_dependency_installer.sh" "$YLABS_HOME/raspberry-farm-scripts/"
-sudo chmod +x "$YLABS_HOME/raspberry-farm-scripts/display_dependency_installer.sh"
+sudo cp "$SRC_DIR/scripts/raspfarm_installer.sh" "$YLABS_HOME/raspberry-farm-scripts/"
+sudo chmod +x "$YLABS_HOME/raspberry-farm-scripts/raspfarm_installer.sh"
 sudo chown -R ylabs:ylabs "$YLABS_HOME/raspberry-farm-scripts"
 
 # === 5. Wrapper Script ===
@@ -43,9 +43,9 @@ sudo chmod +x /usr/local/bin/firstboot-wrapper.sh
 
 # === 6. Systemd Unit ===
 echo "⚙️ Installing firstboot systemd unit..."
-sudo cp "$SRC_DIR/systemd/firstboot-display-installer.service" /etc/systemd/system/
+sudo cp "$SRC_DIR/systemd/firstboot-raspfarm-installer.service" /etc/systemd/system/
 sudo systemctl daemon-reload
-sudo systemctl enable firstboot-display-installer.service
+sudo systemctl enable firstboot-raspfarm-installer.service
 
 # === 7. Touch empty log for tracking ===
 sudo touch "$LOG_FILE"
