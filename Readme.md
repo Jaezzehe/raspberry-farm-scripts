@@ -31,7 +31,7 @@ This project automates the installation of all required components for an OLED-b
 ### 2. 📦 Clone and Run the Installer
 
 ```bash
-git clone https://github.com/YOURNAME/raspberry-farm-scripts.git
+git clone https://github.com/Jaezzehe/raspberry-farm-scripts.git
 cd raspberry-farm-scripts
 chmod +x install.sh
 sudo ./install.sh

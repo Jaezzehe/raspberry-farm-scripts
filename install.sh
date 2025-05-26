@@ -1,7 +1,7 @@
 #!/bin/bash
 # install.sh - Prepares Raspberry Pi for first boot OLED installer (no actual execution)
 
-set -e
+set -e  # Exit on error
 
 # === CONFIG ===
 CONDA_DIR="/opt/miniconda"
@@ -13,7 +13,7 @@ LOG_FILE="/var/log/display_dependency_installer.log"
 
 # === 1. Basic system packages ===
 echo "📦 Installing system dependencies..."
-sudo apt update && sudo apt install -y wget git i2c-tools libgpiod-dev libi2c0 read-edid
+sudo apt update && sudo apt install -y wget git i2c-tools libgpiod-dev libi2c0 read-edid 
 
 # === 2. Miniconda Installer Script (only download if needed) ===
 if [ ! -f "$SRC_DIR/miniconda.sh" ]; then

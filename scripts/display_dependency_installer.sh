@@ -1,29 +1,56 @@
 #!/bin/bash
-#
+###############################################################################
 # Raspberry Pi Ubuntu Setup Script
-# - Miniconda + 'statsenv' conda environment
-# - Python packages for I2C OLED stats
-# - I2C kernel config
-# - MicroK8s install
-# - Systemd service for stats.py
-# - Halo-style progress indicators
+#
+# Automates setup for:
+#   - Miniconda install + 'statsenv' conda environment (Python 3.9)
+#   - OLED stats display Python dependencies (I2C, GPIO)
+#   - I2C kernel configuration (modules, boot config)
+#   - MicroK8s Kubernetes install
+#   - stats.py systemd service (runs at boot)
+#   - Halo-style progress spinners for user feedback
+#
+# USAGE:
+#   sudo bash setup.sh
+#
+# REQUIREMENTS:
+#   - Raspberry Pi running Ubuntu
+#   - Internet access (downloads packages & scripts)
+#
+# RECOMMENDED USAGE:
+#   1. Review this script for customization.
+#   2. Run: sudo bash setup.sh
+#
+# Author: Timon Turro
+# Last updated: 2025-05-26
+###############################################################################
 
-set -e
+
+set -e 
+
+## ==========================
+## Set core environment vars
+## ==========================
 
 export CONDA_ROOT=/opt/miniconda
 export ENV_PATH=$CONDA_ROOT/envs/statsenv
 export PYTHON=$ENV_PATH/bin/python
 export PIP=$ENV_PATH/bin/pip
 
+## ==========================
+## Ensure script runs as root
+## ==========================
 
-# Exit early if the script is not run as root
 if [ "$EUID" -ne 0 ]; then
   echo "❌ This script must be run as root. Use sudo:"
   echo "   sudo $0"
   exit 1
 fi
 
-# Spinner (Halo-style)
+## ==========================
+## Setup progress spinner
+## ==========================
+
 spin='-\|/'
 i=0
 spinner_pid=0
@@ -49,9 +76,10 @@ stop_spinner() {
   fi
 }
 
-########################################
-# 1) Update & install base packages
-########################################
+## ==========================
+## Update and install basics
+## ==========================
+
 start_spinner "Updating package lists..."
 sudo apt-get update -y
 stop_spinner
@@ -60,9 +88,10 @@ start_spinner "Installing system packages..."
 sudo apt-get install -y wget git i2c-tools libgpiod-dev libi2c0 read-edid
 stop_spinner
 
-########################################
-# 2) Install Miniconda (ARM64)
-########################################
+## ==========================
+## Download and setup Miniconda
+## ==========================
+
 start_spinner "Downloading Miniconda..."
 wget -q https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -O miniconda.sh
 stop_spinner
@@ -90,12 +119,12 @@ source /opt/miniconda/etc/profile.d/conda.sh
 conda activate /opt/miniconda/envs/statsenv
 PYTHON=/opt/miniconda/envs/statsenv/bin/python
 PIP=/opt/miniconda/envs/statsenv/bin/pip
-
 stop_spinner
 
-########################################
-# 3) Install Python packages in statsenv (with checks)
-########################################
+## ==========================
+## Install Python requirements
+## ==========================
+
 start_spinner "Installing compiler toolchain for Python packages..."
 sudo apt-get install -y build-essential liblgpio1 liblgpio-dev
 stop_spinner
@@ -145,9 +174,10 @@ $PIP install --upgrade --break-system-packages \
 stop_spinner
 
 
-########################################
-# 4) Clone Adafruit Scripts & run libgpiod.py
-########################################
+## ==========================
+## Clone and setup Adafruit tools
+## ==========================
+
 start_spinner "Setting /opt ownership to ylabs..."
 sudo chown -R ylabs:ylabs /opt
 stop_spinner
@@ -175,9 +205,10 @@ fi
 stop_spinner
 
 
-########################################
-# 5) I2C kernel module and boot config
-########################################
+## ==========================
+## Enable and configure I2C
+## ==========================
+
 start_spinner "Loading I2C kernel modules..."
 sudo modprobe i2c-dev
 sudo modprobe i2c-bcm2708
@@ -194,9 +225,10 @@ if ! grep -q "^dtparam=i2c_arm=on" /boot/firmware/config.txt; then
 fi
 stop_spinner
 
-########################################
-# 6) Install MicroK8s
-########################################
+## ==========================
+## Install and configure MicroK8s
+## ==========================
+
 start_spinner "Installing MicroK8s via snap..."
 sudo snap install microk8s --classic
 stop_spinner
@@ -209,11 +241,12 @@ start_spinner "Waiting for MicroK8s to be ready..."
 sudo microk8s status --wait-ready
 stop_spinner
 
-########################################
-# 7) Prepare stats.py script
-########################################
-start_spinner "Preparing stats.py script..."
+## ==========================
+## Install and enable stats service
+## ==========================
 
+# Copy script
+start_spinner "Preparing stats.py script..."
 if [ ! -f /opt/raspberry-farm-scripts/stats.py ]; then
   sudo mkdir -p /opt/raspberry-farm-scripts
   sudo cp /home/ylabs/raspberry-farm-scripts/stats.py /opt/raspberry-farm-scripts/
@@ -230,15 +263,11 @@ EOF
   sudo chown root:root /opt/raspberry-farm-scripts/stats.py
   sudo chmod +x /opt/raspberry-farm-scripts/stats.py
 fi
-
-
 stop_spinner
 
-########################################
-# 7) Create systemd service
-########################################
-echo "Creating mystats.service..."
+# Create unit
 
+echo "Creating mystats.service..."
 cat <<EOF | sudo tee /etc/systemd/system/mystats.service
 [Unit]
 Description=My Python Script Service
@@ -254,7 +283,7 @@ Restart=on-failure
 WantedBy=multi-user.target
 EOF
 
-
+# Enable service
 start_spinner "Enabling mystats systemd service..."
 sudo systemctl daemon-reload
 sudo systemctl enable mystats.service
@@ -263,11 +292,9 @@ stop_spinner
 
 
 
-
-
-########################################
-# 8) Final reboot
-########################################
+## ==========================
+## Final reboot after setup
+## ==========================
 echo ""
 echo "=============================================="
 echo " Setup completed successfully!"
