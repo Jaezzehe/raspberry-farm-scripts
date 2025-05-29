@@ -109,4 +109,4 @@ cat /var/log/raspfarm_installer.log
 
 ## 📜 License
 
-MIT — see [LICENSE](LICENSE)
+MIT — see [MIT](MIT)
