@@ -29,7 +29,7 @@ sudo cp "$SRC_DIR/scripts/run_stats.sh" "$TARGET_SCRIPT_DIR/"
 sudo chmod +x "$TARGET_SCRIPT_DIR/"*.sh "$TARGET_SCRIPT_DIR/stats.py"
 sudo chown root:root "$TARGET_SCRIPT_DIR/"*
 
-# === 4. Display Dependency Script ===
+# === 4. raspfarm installer Script ===
 echo "🔧 Copying raspfarm_installer.sh to $YLABS_HOME..."
 sudo mkdir -p "$YLABS_HOME/raspberry-farm-scripts"
 sudo cp "$SRC_DIR/scripts/raspfarm_installer.sh" "$YLABS_HOME/raspberry-farm-scripts/"
