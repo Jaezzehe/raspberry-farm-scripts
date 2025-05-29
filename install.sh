@@ -51,5 +51,14 @@ sudo systemctl enable firstboot-raspfarm-installer.service
 sudo touch "$LOG_FILE"
 sudo chown ylabs:ylabs "$LOG_FILE"
 
-# === DONE ===
-echo "✅ Preparation complete. On next boot, the installer will run automatically via systemd."
+
+# ==========================
+# Final reboot after setup
+# ==========================
+echo ""
+echo "=============================================="
+echo " Setup completed successfully!"
+echo " System will reboot in 5 seconds..."
+echo "=============================================="
+sleep 5
+sudo reboot
