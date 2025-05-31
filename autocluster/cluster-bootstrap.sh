@@ -12,7 +12,7 @@ MY_MAC=$(cat /sys/class/net/$IFACE/address | tr -d ':')
 # Scan for master node
 MASTER_IP=""
 for ip in $(seq 1 254); do
-    try_ip="192.168.1.$ip"  # Adjust to your subnet!
+    try_ip="192.168.2.$ip"  # Adjust to your subnet!
     if timeout 0.5 bash -c "</dev/tcp/$try_ip/8080" 2>/dev/null; then
         if curl -s "http://$try_ip:8080/join" | grep "microk8s join" >/dev/null; then
             MASTER_IP="$try_ip"
