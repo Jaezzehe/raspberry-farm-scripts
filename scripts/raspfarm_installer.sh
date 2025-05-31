@@ -290,6 +290,36 @@ sudo systemctl enable mystats.service
 stop_spinner
 
 
+## ==========================
+## Set up Auto-Cluster MicroK8s Bootstrap
+## ==========================
+
+echo "Setting up auto-cluster for MicroK8s..."
+
+# Make sure autocluster scripts are executable
+chmod +x /home/ylabs/raspberry-farm-scripts/autocluster/cluster-bootstrap.sh
+chmod +x /home/ylabs/raspberry-farm-scripts/autocluster/serve-join.py
+
+# Register systemd service for cluster bootstrap
+cat <<EOF | sudo tee /etc/systemd/system/cluster-bootstrap.service > /dev/null
+[Unit]
+Description=MicroK8s Auto-Cluster Bootstrap
+After=network.target
+
+[Service]
+Type=simple
+ExecStart=/home/ylabs/raspberry-farm-scripts/autocluster/cluster-bootstrap.sh
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+EOF
+
+# Reload systemd and enable the service for next boot
+sudo systemctl daemon-reload
+sudo systemctl enable cluster-bootstrap.service
+
+echo "Auto-cluster service installed! It will run on every boot and auto-join or auto-promote as needed."
 
 
 ## ==========================
