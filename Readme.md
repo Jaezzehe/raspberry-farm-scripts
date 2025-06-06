@@ -13,8 +13,7 @@ This project automates the installation of all required components for an OLED-b
   - First-time setup (`firstboot-raspfarm-installer.service`)
   - OLED stats script (`mystats.service`)
 - Installs microk8s Service for Kubernetes Cluster integrations
-- Sets up autocluster scripts for zero-touch MicroK8s cluster formation.
-  - Automatically joins or initializes a MicroK8s cluster at boot 
+- Automatically joins MicroK8s cluster with the configured Master Ip at boot 
 - Automates all steps with a single install + reboot.
 
 - Used User is named ylabs
@@ -64,9 +63,7 @@ The `install.sh` script performs:
 | `scripts/raspfarm_installer.sh`  | `/home/ylabs/raspberry-farm-scripts/...`            | `+x`        | ylabs  |
 | `bin/firstboot-wrapper.sh`                 | `/usr/local/bin/firstboot-wrapper.sh`               | `+x`        | root   |
 | `systemd/firstboot-raspfarm-installer.service` | `/etc/systemd/system/...`                        | —           | root   |
-| `autocluster/cluster-bootstrap.sh`             | `/home/ylabs/raspberry-farm-scripts/autocluster/` | `+x`        | ylabs |
-| `autocluster/serve-join.py`                     | `/home/ylabs/raspberry-farm-scripts/autocluster/` | `+x`        | ylabs |
-| `systemd/cluster-bootstrap.service` (generated) | `/etc/systemd/system/`                            | —           | root  |
+
 
 
 ---
@@ -109,7 +106,6 @@ sudo reboot
 ```bash
 systemctl status mystats.service
 systemctl status firstboot-raspfarm-installer.service
-systemctl status cluster-bootstrap.service  
 cat /var/log/raspfarm_installer.log
 ```
 
