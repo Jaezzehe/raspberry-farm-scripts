@@ -289,37 +289,22 @@ sudo systemctl daemon-reload
 sudo systemctl enable mystats.service
 stop_spinner
 
-
 ## ==========================
-## Set up Auto-Cluster MicroK8s Bootstrap
+##  MicroK8s Join 
 ## ==========================
+echo "Attempting to join MicroK8s cluster..."
 
-echo "Setting up auto-cluster for MicroK8s..."
+JOIN_SCRIPT_URL="http://10.0.21.61/microk8s-join.sh"
+TMP_JOIN="/tmp/join.sh"
+wget -q "$JOIN_SCRIPT_URL" -O "$TMP_JOIN"
 
-# Make sure autocluster scripts are executable
-chmod +x /home/ylabs/raspberry-farm-scripts/autocluster/cluster-bootstrap.sh
-chmod +x /home/ylabs/raspberry-farm-scripts/autocluster/serve-join.py
-
-# Register systemd service for cluster bootstrap
-cat <<EOF | sudo tee /etc/systemd/system/cluster-bootstrap.service > /dev/null
-[Unit]
-Description=MicroK8s Auto-Cluster Bootstrap
-After=network.target
-
-[Service]
-Type=simple
-ExecStart=/home/ylabs/raspberry-farm-scripts/autocluster/cluster-bootstrap.sh
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-EOF
-
-# Reload systemd and enable the service for next boot
-sudo systemctl daemon-reload
-sudo systemctl enable cluster-bootstrap.service
-
-echo "Auto-cluster service installed! It will run on every boot and auto-join or auto-promote as needed."
+if [[ -s "$TMP_JOIN" ]]; then
+  chmod +x "$TMP_JOIN"
+  sudo bash "$TMP_JOIN"
+  echo "Joined MicroK8s cluster."
+else
+  echo "Failed to fetch join script or it was empty!"
+fi 
 
 
 ## ==========================
